@@ -1,0 +1,14 @@
+//
+// Created by purehero on 2024-01-09.
+//
+
+#ifndef PUREHEROTESTAPP00_SEARCHDEXFILE_H
+#define PUREHEROTESTAPP00_SEARCHDEXFILE_H
+
+
+class SearchDexFile {
+
+};
+
+
+#endif //PUREHEROTESTAPP00_SEARCHDEXFILE_H
