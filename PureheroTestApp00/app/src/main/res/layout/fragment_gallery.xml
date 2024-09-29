@@ -19,4 +19,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnCheckVPhoneGaga"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="check vPhoneGaga"
+        app:layout_constraintTop_toBottomOf="@+id/tdKeyText"
+        tools:layout_editor_absoluteX="-133dp" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/tdKeyText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="hint"
+         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

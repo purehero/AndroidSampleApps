@@ -1,18 +1,8 @@
-#include "util.h"
+#include "utils/util.h"
 #include "jni_helper.h"
 
 #include "MapsFile.h"
 
-void JNI_InitModule(JNIEnv* env, jobject obj) {
-    LOGT();
-
-    void * p_fopen = (void *) fopen;
-    LOGD( "fopen addr : 0x%p", p_fopen );
-
-    std::string result;
-    bytesToHexString((unsigned char *) p_fopen, 32, result );
-    LOGD( "%s", result.c_str());
-}
 
 #include <dlfcn.h>
 #include <fcntl.h>
@@ -227,58 +217,4 @@ void * thread_maps_inotify(void *) {
     return NULL;
 }
 
-void JNI_OnUnload(JavaVM* vm, void* reserved)
-{
-    LOGT();
-    g_thread_check_native_api_hook = false;
-}
 
-jint JNI_OnLoad(JavaVM* vm, void* reserved)
-{
-    LOGT();
-    LOGD( "PID:%d, PPID:%d", getpid(), getppid());
-
-    JNIEnv* env = NULL;
-    if(vm->GetEnv((void**) &env, JNI_VERSION_1_6) != JNI_OK) {
-        LOGE("ERROR: GetEnv failed");
-        return -1;
-    }
-
-    const char * strNativeClassname = "com/purehero/app00/NativeModule00";
-    jclass clazz = env->FindClass( strNativeClassname );
-    if( clazz == NULL ) {
-        LOGE( "ERROR: FineClass => %s", strNativeClassname );
-        return JNI_FALSE;
-    }
-    JNINativeMethod native_methods [] = {
-            { "init_module", "()V", (void*) JNI_InitModule },
-            { "onClickSnackbar", "(Landroid/view/View;)V", (void*) JNI_OnClickSnackbar },
-    };
-
-    if( env->RegisterNatives( clazz, native_methods, sizeof(native_methods)/sizeof(native_methods[0])) < 0 ) {
-        LOGE( "ERROR: RegisterNatives => %s %d method", strNativeClassname, (int)(sizeof(native_methods)/sizeof(native_methods[0])));
-        return JNI_FALSE;
-    }
-
-#if defined(__i386__)
-    LOGD("[X86 MODULE]");
-#elif defined(__x86_64__)	// arm 64bit
-        LOGD("[X64 MODULE]");
-#elif defined(__aarch64__)	// arm 64bit
-    LOGD("[ARM64 MODULE]");
-#else
-    LOGD("[ARM32 MODULE]");
-#endif
-    InitJumpCodeCheckMethods();
-
-    struct func_info new_func;
-    new_func.func_name = "";
-    new_func.func_ptr = (size_t) env->functions->FindClass;
-    func_infos.push_back(new_func);
-
-    pthread_t tid;
-    pthread_create( &tid, NULL, thread_check_native_api_hook, env );
-    pthread_create( &tid, NULL, thread_maps_inotify, env );
-
-    return JNI_VERSION_1_6;
-}

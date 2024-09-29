@@ -27,7 +27,7 @@ project("native-module00")
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
     # List C/C++ source files with relative paths to this CMakeLists.txt.
-        NativeModule00.cpp util.cpp SearchDexFile.cpp MapsFile.cpp)
+        _Main.cpp utils/util.cpp utils/Inotify.cpp)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this

@@ -20,4 +20,11 @@ void parse_maps( maps_data_callback func );
 
 void MapsDataCallbackMethod( MAPS_DATA * maps_data );
 
+class MapsFile {
+public :
+    MapsFile();
+
+    void Update();
+}
+
 #endif //PUREHEROTESTAPP00_MAPSFILE_H

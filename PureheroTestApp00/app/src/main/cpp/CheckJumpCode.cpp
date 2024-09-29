@@ -3,8 +3,16 @@
 //
 
 #include "CheckJumpCode.h"
+#include "jni_helper.h"
 
-void CheckJumpCode::init() {
+CheckJumpCode * CheckJumpCode::CreateInstanceAllMethos()
+{
+    CheckJumpCode * inst = new CheckJumpCode();
+    inst->AddAllMethod();
+    return inst;
+}
+
+void CheckJumpCode::AddAllMethod() {
     func_infos.push_back(DEF_FUNC_INFO(_exit));
     func_infos.push_back(DEF_FUNC_INFO(access));
     func_infos.push_back(DEF_FUNC_INFO(alarm));
@@ -58,4 +66,53 @@ void CheckJumpCode::init() {
     func_infos.push_back(DEF_FUNC_INFO(remove));
     func_infos.push_back(DEF_FUNC_INFO(system));
     func_infos.push_back(DEF_FUNC_INFO(dlsym));             // 40 ~ 44
+}
+
+FUNCTION_INFO * CheckJumpCode::CheckAllMethod()
+{
+    int func_list_count = func_infos.size();
+    for (int i(0) ; i < func_list_count; ++i) {
+        if (CheckMethod((unsigned char *) func_infos[i].func_ptr)) {
+            return &func_infos[i];
+        }
+    }
+
+    return NULL;
+}
+
+//__attribute__((always_inline))
+bool CheckJumpCode::CheckMethod( unsigned char* ptr )
+{
+#if defined(__i386__) || defined(__x86_64__)
+    if (*ptr == 0xE9) {
+        return true;					// https://tmdahr1245.tistory.com/103
+    }
+
+#elif defined(__aarch64__)	// arm 64bit
+    /* 	50 00 00 58 :  		ldr x16, #8
+		00 02 1f d6 : 		br x16
+					or
+		20 02 1f d6 : 		br x17
+	 */
+	if ((*(ptr+4) == 0x00 || *(ptr+4) == 0x20) && *(ptr+5) == 0x02 && *(ptr+6) == 0x1F && *(ptr+7) == 0xD6) {
+		return true;
+	}
+
+#else	// arm 32bit
+    if (*ptr == 0x04 && *(ptr+1) == 0xF0 && *(ptr+2) == 0x1F && *(ptr+3) == 0xE5) { // arm
+        // 04 f0 1f e5 : ldr pc, [pc, #-4]
+        return true;
+    }
+
+    if (*ptr == 0xF8 && (*(ptr+1)&0xF0) == 0 && *(ptr+2) == 0xF0 && (*(ptr+3)&0xF0) == 0) { // arm thumb32
+        // f8 0{x1} f0 0{x2} : strb.w pc, [r{x1}, r{x2}]
+        return true;
+    }
+
+    if (*ptr == 0xB5 && (*(ptr+1)&0xF0) == 0 && (*(ptr+2)&0xF0) == 0xF0) { // arm thumb16
+        // b5 0{x1} f{x2} {x3}{x4} : strlt pc, [r{x1}, #-0x{x2}{x3}{x4}]
+        return true;
+    }
+#endif
+    return false;
 }

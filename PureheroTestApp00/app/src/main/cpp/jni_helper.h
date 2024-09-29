@@ -11,6 +11,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "str_obfuscator/MetaString.h"  // OBFUSCATED("your string")
+
 #define ENABLE_LOG
 
 #ifdef ENABLE_LOG

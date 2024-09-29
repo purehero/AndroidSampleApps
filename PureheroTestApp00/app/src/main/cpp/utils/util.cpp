@@ -3,7 +3,7 @@
 //
 
 #include "util.h"
-#include "jni_helper.h"
+#include "../jni_helper.h"
 #include <iomanip>
 
 int bytesToHexString( unsigned char * byteArray, int len, std::string & result ) {

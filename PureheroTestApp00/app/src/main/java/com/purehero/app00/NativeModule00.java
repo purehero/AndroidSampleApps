@@ -5,6 +5,8 @@ import android.view.View;
 public class NativeModule00 {
     public native void init_module();
 
+    public native void setAlram( int seconds );
+
     public native void onClickSnackbar(View view);
 
     static {

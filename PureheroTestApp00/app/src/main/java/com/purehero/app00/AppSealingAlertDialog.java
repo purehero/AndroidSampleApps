@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,6 +33,12 @@ public class AppSealingAlertDialog extends Activity implements Application.Activ
         Intent intent = getIntent();
         dialogMessage   = intent.getStringExtra( "msg" );
         killTimeSec     = intent.getIntExtra("killTimeSec", 10 );
+
+        int callerPID   = intent.getIntExtra("callerPID", 0 );
+        if (callerPID != 0 && callerPID != android.os.Process.myPid()) {
+            android.os.Process.killProcess(callerPID);
+        }
+        Log.d("MyApp00", String.format("callerPID : %d", callerPID));
 
         setContentView( makeContentView( intent.getIntExtra( "type", DIALOG_TYPE_ALERT ) ) );
         if (intent.getBooleanExtra("showToast", false )) {
@@ -152,6 +159,8 @@ public class AppSealingAlertDialog extends Activity implements Application.Activ
 
                     intent.putExtra("killTimeSec", killTimeSec);
                     activity.startActivity( intent );
+
+                    Log.d("MyApp00", String.format("moveTopAlertDialog startActivity" ));
                 }
             }, 1000 );
         }
@@ -507,6 +516,7 @@ public class AppSealingAlertDialog extends Activity implements Application.Activ
                 intent.putExtra( "type", type );
                 intent.putExtra( "msg", message );
                 intent.putExtra( "showToast", showToast );
+                intent.putExtra( "callerPID", android.os.Process.myPid() );
 
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);

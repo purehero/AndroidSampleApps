@@ -20,17 +20,24 @@
 
 #define DEF_FUNC_INFO(x)    {#x,(size_t)x}
 #define DEF_FUNC_INFO2(x)    {"",(size_t)x}
-struct func_info {
+
+typedef struct func_info {
     const char * func_name;
     size_t func_ptr;
-};
+} FUNCTION_INFO;
 
 class CheckJumpCode {
-
 public :
-    void init();
+    static CheckJumpCode * CreateInstanceAllMethos();
+    FUNCTION_INFO * CheckAllMethod();
+
+    CheckJumpCode(){}
+    bool CheckMethod( unsigned char* ptr );
+    bool CheckExitMethod() { return CheckJumpCode((unsigned char *) exit) || CheckJumpCode((unsigned char *) _exit); };
+
 protected:
-    std::vector<struct func_info> func_infos;
+    std::vector<FUNCTION_INFO> func_infos;
+    void AddAllMethod();
 };
 
 

@@ -50,8 +50,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 nativeModule00.onClickSnackbar(view);
+
+                AppSealingAlertDialog.showAlertDialog( MainActivity.this, AppSealingAlertDialog.DIALOG_TYPE_ALERT_TIMER, "adfadsfasdfasdf", false );
+                //nativeModule00.setAlram( 1 );
+
+                /*
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                 */
             }
         });
         DrawerLayout drawer = binding.drawerLayout;

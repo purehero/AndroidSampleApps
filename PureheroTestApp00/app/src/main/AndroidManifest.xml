@@ -23,7 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AppSealingAlertDialog" android:exported="false" />
+        <activity android:name=".AppSealingAlertDialog" android:exported="false" android:process=":alert_dialog" />
+        <service android:name=".AppSealingIPService" android:exported="false" android:process=":ip_service" android:isolatedProcess="true" android:useAppZygote="true" />
     </application>
 
 </manifest>
